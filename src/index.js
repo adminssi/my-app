@@ -6,6 +6,7 @@ import './index.css';
 
 
 class Square extends React.Component {
+  /* Tämän voi myös nykyään toteuttaa getInitialState() methodilla */
   constructor(props) {
     super(props);
     this.state = {
