@@ -14,11 +14,10 @@ function Square(props) {
     }
   
   class Board extends React.Component {
-
     renderSquare(i) {
       return (
         <Square 
-          value ={this.props.squares[i]}
+          value={this.props.squares[i]}
           onClick={() => this.props.handleClick(i)}
         />
       );
@@ -27,7 +26,6 @@ function Square(props) {
     render() {  
       return (
         <div>
-          <div className="status">{status}</div>
           <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
@@ -55,11 +53,12 @@ function Square(props) {
         history: [{
           squares: Array(9).fill(null),
         }],
+        stepNumber: 0,
         xIsNext: true,
       };
     }
     handleClick(i) {
-      const history = this.state.history;
+      const history = this.state.history.slice(0, this.state.stepNumber + 1);
       const current = history[history.length - 1];
       const squares = current.squares.slice();
 
@@ -71,13 +70,21 @@ function Square(props) {
         history: history.concat([{
           squares: squares
         }]),
+        stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
+      });
+    }
+
+    jumpTo(step) {
+      this.setState({
+        stepNumber: step,
+        xIsNext: (step % 2) === 0,
       });
     }
 
     render() {
       const history = this.state.history;
-      const current = history[history.length - 1];
+      const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
 
       const moves = history.map((step, move) => {
@@ -85,7 +92,7 @@ function Square(props) {
           'Go to move #' + move :
           'Go to game start';
         return (
-          <li>
+          <li key={move}>
             <button onClick={() => this.jumpTo(move)}>{desc}</button>
           </li>
         );
@@ -120,7 +127,7 @@ function Square(props) {
   
   ReactDOM.render(
     <Game />,
-    document.getElementById('root')
+    document.getElementById("root")
   );
 
   function calculateWinner(squares) {
